@@ -256,7 +256,7 @@
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <nodeVersion>v8.11.3</nodeVersion>
+                            <nodeVersion>v14.19.0</nodeVersion>
                             <yarnVersion>v1.7.0</yarnVersion>
                         </configuration>
                     </execution>

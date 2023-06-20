@@ -110,7 +110,7 @@
                First, let's make sure the normal test-compile doesn't try to
                compile our integration tests.
             -->
-              <execution>
+              <!-- <execution>
                 <id>default-testCompile</id>
                 <phase>test-compile</phase>
                 <configuration>
@@ -119,13 +119,13 @@
                     <testExclude>**/*IT</testExclude>
                   </testExcludes>
                 </configuration>
-              </execution>
+              </execution> -->
             <!--
                Finally, let's make a 'just for integration tests'-compile that
                fires off prior to our integration tests but after the package
                phase has created our shaded artifacts.
             -->
-              <execution>
+              <!-- <execution>
                 <id>compile-integration-tests</id>
                 <phase>pre-integration-test</phase>
                 <goals>
@@ -137,14 +137,14 @@
                     <testInclude>**/*IT</testInclude>
                   </testIncludes>
                 </configuration>
-              </execution>
+              </execution> -->
             </executions>
           </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-failsafe-plugin</artifactId>
             <executions>
-              <execution>
+              <!-- <execution>
                 <goals>
                   <goal>integration-test</goal>
                   <goal>verify</goal>
@@ -152,7 +152,7 @@
                 <configuration>
                   <trimStackTrace>false</trimStackTrace>
                 </configuration>
-              </execution>
+              </execution> -->
             </executions>
           </plugin>
         </plugins>

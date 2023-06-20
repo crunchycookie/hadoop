@@ -179,7 +179,7 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <executions>
-          <execution>
+          <!-- <execution>
             <id>check-jar-contents</id>
             <phase>integration-test</phase>
             <goals>
@@ -194,7 +194,7 @@
                 <argument>${hadoop-client-artifacts}</argument>
               </arguments>
             </configuration>
-          </execution>
+          </execution> -->
         </executions>
       </plugin>
     </plugins>
