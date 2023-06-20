@@ -61,3 +61,8 @@ report.html
 
 
 .mvn
+
+# low-carbon-harvesting
+protobuf-3.7-src
+protobuf-3.7.1.tar.gz
+.vscode
