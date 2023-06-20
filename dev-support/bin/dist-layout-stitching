@@ -70,6 +70,9 @@ function copyifnotexists()
   else
     for childpath in "${src}"/*; do
       child="${childpath##*/}"
+			if [ "${child}" == "*" ]; then
+				continue;
+			fi
       if [[ "${child}" == "doc" ||
             "${child}" == "webapps" ]]; then
         mkdir -p "${dest}/${child}"

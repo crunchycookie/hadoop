@@ -190,6 +190,17 @@
       <outputDirectory>/share/hadoop/${hadoop.component}/sls</outputDirectory>
     </fileSet>
     <fileSet>
+      <directory>../hadoop-dtss/target</directory>
+      <outputDirectory>/share/hadoop/${hadoop.component}/sources</outputDirectory>
+      <includes>
+        <include>*-sources.jar</include>
+      </includes>
+    </fileSet>
+    <fileSet>
+      <directory>../hadoop-dtss/target/hadoop-dtss-${project.version}/dtss</directory>
+      <outputDirectory>/share/hadoop/${hadoop.component}/dtss</outputDirectory>
+    </fileSet>
+    <fileSet>
       <directory>../hadoop-resourceestimator/target</directory>
       <outputDirectory>/share/hadoop/${hadoop.component}/sources</outputDirectory>
       <includes>

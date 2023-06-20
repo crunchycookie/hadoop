@@ -1,0 +1,9 @@
+{
+  "user-limit-factor": 1,
+  "state": "RUNNING",
+  "acl_submit_applications": "*",
+  "acl_administer_queue": "*",
+  "acl_application_max_priority": "*",
+  "maximum-application-lifetime": -1,
+  "default-application-lifetime": -1
+}

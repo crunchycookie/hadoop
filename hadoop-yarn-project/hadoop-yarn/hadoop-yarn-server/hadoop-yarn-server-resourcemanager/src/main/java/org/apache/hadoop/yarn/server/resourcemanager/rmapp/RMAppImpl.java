@@ -396,8 +396,7 @@ public class RMAppImpl implements RMApp, Recoverable {
 
      .installTopology();
 
-  private final StateMachine<RMAppState, RMAppEventType, RMAppEvent>
-                                                                 stateMachine;
+  private final StateMachine<RMAppState, RMAppEventType, RMAppEvent> stateMachine;
 
   private static final int DUMMY_APPLICATION_ATTEMPT_NUMBER = -1;
   private static final float MINIMUM_AM_BLACKLIST_THRESHOLD_VALUE = 0.0f;
@@ -411,7 +410,29 @@ public class RMAppImpl implements RMApp, Recoverable {
       List<ResourceRequest> amReqs) {
     this(applicationId, rmContext, config, name, user, queue, submissionContext,
       scheduler, masterService, submitTime, applicationType, applicationTags,
-      amReqs, null, -1);
+        amReqs, null, -1, SystemClock.getInstance());
+  }
+
+  public RMAppImpl(ApplicationId applicationId, RMContext rmContext,
+      Configuration config, String name, String user, String queue,
+      ApplicationSubmissionContext submissionContext, YarnScheduler scheduler,
+      ApplicationMasterService masterService, long submitTime,
+      String applicationType, Set<String> applicationTags,
+                   List<ResourceRequest> amReqs, ApplicationPlacementContext placementContext, long startTime) {
+    this(applicationId, rmContext, config, name, user, queue, submissionContext,
+        scheduler, masterService, submitTime, applicationType, applicationTags,
+        amReqs, placementContext, startTime, SystemClock.getInstance());
+  }
+
+  public RMAppImpl(ApplicationId applicationId, RMContext rmContext,
+      Configuration config, String name, String user, String queue,
+      ApplicationSubmissionContext submissionContext, YarnScheduler scheduler,
+      ApplicationMasterService masterService, long submitTime,
+      String applicationType, Set<String> applicationTags,
+      List<ResourceRequest> amReqs, Clock clock) {
+    this(applicationId, rmContext, config, name, user, queue, submissionContext,
+      scheduler, masterService, submitTime, applicationType, applicationTags,
+      amReqs, null, -1, clock);
   }
 
   public RMAppImpl(ApplicationId applicationId, RMContext rmContext,
@@ -420,9 +441,8 @@ public class RMAppImpl implements RMApp, Recoverable {
       ApplicationMasterService masterService, long submitTime,
       String applicationType, Set<String> applicationTags,
       List<ResourceRequest> amReqs, ApplicationPlacementContext
-      placementContext, long startTime) {
-
-    this.systemClock = SystemClock.getInstance();
+      placementContext, long startTime, Clock clock) {
+    this.systemClock = clock;
 
     this.applicationId = applicationId;
     this.name = StringInterner.weakIntern(name);

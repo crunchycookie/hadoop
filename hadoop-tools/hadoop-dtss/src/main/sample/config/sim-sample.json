@@ -1,0 +1,12 @@
+{
+  "clusterTopologyFilePath": "",
+  "traceConfig": {
+    "traceType": "SLS",
+    "traceFilePath": ""
+  },
+  "isMetricsOn": true,
+  "utilityEquation": "dl",
+  "metricsOutputDirectory": "",
+  "randomSeed": 5,
+  "simulationDurationMinutes": 10
+}

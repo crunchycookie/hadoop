@@ -1026,7 +1026,7 @@ public abstract class AbstractYarnScheduler
     return clock;
   }
 
-  @VisibleForTesting
+  @Override
   public void setClock(Clock clock) {
     this.clock = clock;
   }

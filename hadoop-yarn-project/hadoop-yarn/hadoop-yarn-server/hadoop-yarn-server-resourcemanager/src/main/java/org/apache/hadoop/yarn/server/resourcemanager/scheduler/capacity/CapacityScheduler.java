@@ -340,7 +340,7 @@ public class CapacityScheduler extends
       this.labelManager = rmContext.getNodeLabelManager();
       this.appPriorityACLManager = new AppPriorityACLsManager(conf);
       this.queueManager = new CapacitySchedulerQueueManager(yarnConf,
-          this.labelManager, this.appPriorityACLManager);
+          this.labelManager, this.appPriorityACLManager, getClock());
       this.queueManager.setCapacitySchedulerContext(this);
 
       this.autoQueueHandler = new CapacitySchedulerAutoQueueHandler(
@@ -1511,6 +1511,9 @@ public class CapacityScheduler extends
     node.updateLabels(newLabels);
   }
 
+  /**
+   * This method sets the heartbeat message for allocations.
+   */
   private void updateSchedulerHealth(long now, NodeId nodeId,
       CSAssignment assignment) {
     List<AssignmentInformation.AssignmentDetails> allocations =
@@ -1793,6 +1796,7 @@ public class CapacityScheduler extends
         SchedulingMode.RESPECT_PARTITION_EXCLUSIVITY);
 
     assignment.setSchedulingMode(SchedulingMode.RESPECT_PARTITION_EXCLUSIVITY);
+
     submitResourceCommitRequest(getClusterResource(), assignment);
 
     if (Resources.greaterThan(calculator, getClusterResource(),

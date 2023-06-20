@@ -93,7 +93,7 @@ public class TestCSMaxRunningAppsEnforcer {
         .thenReturn(Resource.newInstance(0, 0));
     when(scheduler.getPreemptionManager()).thenReturn(preemptionManager);
     queueManager = new CapacitySchedulerQueueManager(csConfig, labelManager,
-        appPriorityACLManager);
+        appPriorityACLManager, clock);
     queueManager.setCapacitySchedulerContext(scheduler);
     queueManager.initializeQueues(csConfig);
   }

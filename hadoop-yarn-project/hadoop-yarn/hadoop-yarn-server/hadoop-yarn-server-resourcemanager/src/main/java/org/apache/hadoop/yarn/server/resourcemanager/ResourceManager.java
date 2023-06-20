@@ -128,6 +128,8 @@ import org.apache.hadoop.yarn.server.webproxy.ProxyCA;
 import org.apache.hadoop.yarn.server.webproxy.ProxyUriUtils;
 import org.apache.hadoop.yarn.server.webproxy.WebAppProxy;
 import org.apache.hadoop.yarn.server.webproxy.WebAppProxyServlet;
+import org.apache.hadoop.yarn.util.EventClock;
+import org.apache.hadoop.yarn.util.ScheduledThreadPoolEventUTCClock;
 import org.apache.hadoop.yarn.webapp.WebApp;
 import org.apache.hadoop.yarn.webapp.WebApps;
 import org.apache.hadoop.yarn.webapp.WebApps.Builder;
@@ -221,6 +223,7 @@ public class ResourceManager extends CompositeService
   private final String zkRootNodePassword =
       Long.toString(new SecureRandom().nextLong());
   private boolean recoveryEnabled;
+  protected EventClock clock = null;
 
   @VisibleForTesting
   protected String webAppAddress;
@@ -268,6 +271,10 @@ public class ResourceManager extends CompositeService
 
   @Override
   protected void serviceInit(Configuration conf) throws Exception {
+    if (clock == null) {
+      clock = new ScheduledThreadPoolEventUTCClock(1);
+    }
+
     this.conf = conf;
     UserGroupInformation.setConfiguration(conf);
     this.rmContext = new RMContextImpl();
@@ -500,8 +507,10 @@ public class ResourceManager extends CompositeService
     try {
       Class<?> reservationClazz = Class.forName(reservationClassName);
       if (ReservationSystem.class.isAssignableFrom(reservationClazz)) {
-        return (ReservationSystem) ReflectionUtils.newInstance(
+        final ReservationSystem reservationSystem = (ReservationSystem) ReflectionUtils.newInstance(
             reservationClazz, this.conf);
+        reservationSystem.setClock(clock);
+        return reservationSystem;
       } else {
         throw new YarnRuntimeException("Class: " + reservationClassName
             + " not instance of " + ReservationSystem.class.getCanonicalName());
@@ -781,7 +790,9 @@ public class ResourceManager extends CompositeService
       // Initialize the scheduler
       scheduler = createScheduler();
       scheduler.setRMContext(rmContext);
+      scheduler.setClock(clock);
       addIfService(scheduler);
+
       rmContext.setScheduler(scheduler);
 
       schedulerDispatcher = createSchedulerEventDispatcher();
@@ -1450,7 +1461,8 @@ public class ResourceManager extends CompositeService
   protected ClientRMService createClientRMService() {
     return new ClientRMService(this.rmContext, scheduler, this.rmAppManager,
         this.applicationACLsManager, this.queueACLsManager,
-        this.rmContext.getRMDelegationTokenSecretManager());
+        this.rmContext.getRMDelegationTokenSecretManager(),
+        this.clock);
   }
 
   protected ApplicationMasterService createApplicationMasterService() {

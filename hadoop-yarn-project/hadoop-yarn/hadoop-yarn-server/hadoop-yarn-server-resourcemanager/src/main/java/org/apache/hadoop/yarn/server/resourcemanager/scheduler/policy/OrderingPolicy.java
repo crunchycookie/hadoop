@@ -19,7 +19,11 @@
 package org.apache.hadoop.yarn.server.resourcemanager.scheduler.policy;
 
 import java.util.*;
+
+import org.apache.hadoop.yarn.api.records.Resource;
 import org.apache.hadoop.yarn.server.resourcemanager.rmcontainer.RMContainer;
+import org.apache.hadoop.yarn.util.Clock;
+import org.apache.hadoop.yarn.util.resource.ResourceCalculator;
 
 
 /**
@@ -135,4 +139,5 @@ public interface OrderingPolicy<S extends SchedulableEntity> {
    */
   String getConfigName();
 
+  void setClock(Clock clock);
 }

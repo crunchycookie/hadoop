@@ -24,6 +24,7 @@ import org.apache.hadoop.yarn.api.records.ReservationDefinition;
 import org.apache.hadoop.yarn.server.resourcemanager.reservation.Plan;
 import org.apache.hadoop.yarn.server.resourcemanager.reservation.ReservationSchedulerConfiguration;
 import org.apache.hadoop.yarn.server.resourcemanager.reservation.exceptions.PlanningException;
+import org.apache.hadoop.yarn.util.Clock;
 
 public interface Planner {
 
@@ -42,8 +43,9 @@ public interface Planner {
   /**
    * Initialize the replanner
    *
+   * @param clock the clock
    * @param planQueueName the name of the queue for this plan
    * @param conf the scheduler configuration
    */
-  void init(String planQueueName, ReservationSchedulerConfiguration conf);
+  void init(Clock clock, String planQueueName, ReservationSchedulerConfiguration conf);
 }

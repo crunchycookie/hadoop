@@ -28,6 +28,7 @@ import org.apache.hadoop.yarn.api.records.NodeId;
 import org.apache.hadoop.yarn.api.records.SchedulingRequest;
 import org.apache.hadoop.yarn.server.resourcemanager.RMContext;
 import org.apache.hadoop.yarn.server.resourcemanager.recovery.Recoverable;
+import org.apache.hadoop.yarn.util.Clock;
 
 /**
  * This interface is the one implemented by the schedulers. It mainly extends 
@@ -45,6 +46,13 @@ public interface ResourceScheduler extends YarnScheduler, Recoverable {
    * @param rmContext created by ResourceManager
    */
   void setRMContext(RMContext rmContext);
+
+  /**
+   * Set the shared clock for <code>ResourceScheduler</code>
+   * This method should be called immediately after instantiating a scheduler once.
+   * @param clock the clock of the ResourceManager
+   */
+  void setClock(Clock clock);
 
   /**
    * Re-initialize the <code>ResourceScheduler</code>.

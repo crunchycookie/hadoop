@@ -30,6 +30,8 @@ import org.apache.hadoop.yarn.server.resourcemanager.recovery.Recoverable;
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.Queue;
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.ResourceScheduler;
 import org.apache.hadoop.yarn.server.resourcemanager.security.ReservationsACLsManager;
+import org.apache.hadoop.yarn.util.Clock;
+import org.apache.hadoop.yarn.util.EventClock;
 
 /**
  * This interface is the one implemented by any system that wants to support
@@ -132,4 +134,15 @@ public interface ReservationSystem extends Recoverable {
    *
    */
   ReservationsACLsManager getReservationsACLsManager();
+
+  /**
+   * Gets the {@link Clock}.
+   * @return clock
+   */
+  EventClock getClock();
+
+  /**
+   * Sets the {@link EventClock}.
+   */
+  void setClock(EventClock clock);
 }

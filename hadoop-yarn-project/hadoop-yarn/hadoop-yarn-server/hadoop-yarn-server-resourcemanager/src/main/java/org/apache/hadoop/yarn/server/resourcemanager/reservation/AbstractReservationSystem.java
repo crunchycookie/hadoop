@@ -18,17 +18,6 @@
 
 package org.apache.hadoop.yarn.server.resourcemanager.reservation;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import org.apache.hadoop.classification.InterfaceAudience.LimitedPrivate;
 import org.apache.hadoop.classification.InterfaceStability.Unstable;
 import org.apache.hadoop.conf.Configuration;
@@ -54,10 +43,20 @@ import org.apache.hadoop.yarn.server.resourcemanager.security.CapacityReservatio
 import org.apache.hadoop.yarn.server.resourcemanager.security.FairReservationsACLsManager;
 import org.apache.hadoop.yarn.server.resourcemanager.security.ReservationsACLsManager;
 import org.apache.hadoop.yarn.util.Clock;
-import org.apache.hadoop.yarn.util.UTCClock;
+import org.apache.hadoop.yarn.util.EventClock;
 import org.apache.hadoop.yarn.util.resource.ResourceCalculator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * This is the implementation of {@link ReservationSystem} based on the
@@ -80,7 +79,7 @@ public abstract class AbstractReservationSystem extends AbstractService
 
   private boolean initialized = false;
 
-  private final Clock clock = new UTCClock();
+  private EventClock clock;
 
   private AtomicLong resCounter = new AtomicLong();
 
@@ -92,8 +91,6 @@ public abstract class AbstractReservationSystem extends AbstractService
   private RMContext rmContext;
 
   private ResourceScheduler scheduler;
-
-  private ScheduledExecutorService scheduledExecutorService;
 
   protected Configuration conf;
 
@@ -323,10 +320,19 @@ public abstract class AbstractReservationSystem extends AbstractService
     }
   }
 
+  @Override
+  public EventClock getClock() {
+    return clock;
+  }
+
+  @Override
+  public void setClock(final EventClock clock) {
+    this.clock = clock;
+  }
+
   private void startPlanFollower(long initialDelay) {
     if (planFollower != null) {
-      scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
-      scheduledExecutorService.scheduleWithFixedDelay(planFollower,
+      clock.scheduleWithFixedDelay(planFollower,
           initialDelay, planStepSize, TimeUnit.MILLISECONDS);
     }
   }
@@ -354,9 +360,8 @@ public abstract class AbstractReservationSystem extends AbstractService
   @Override
   public void serviceStop() {
     // Stop the plan follower
-    if (scheduledExecutorService != null
-        && !scheduledExecutorService.isShutdown()) {
-      scheduledExecutorService.shutdown();
+    if (!clock.isShutdown()) {
+      clock.shutdown();
     }
     // Clear the plans
     plans.clear();
@@ -431,7 +436,7 @@ public abstract class AbstractReservationSystem extends AbstractService
         getAgent(planQueuePath), totCap, planStepSize, rescCalc, minAllocation,
         maxAllocation, planQueueName, getReplanner(planQueuePath),
         getReservationSchedulerConfiguration().getMoveOnExpiry(planQueuePath),
-        maxPeriodicity, rmContext);
+        maxPeriodicity, rmContext, clock);
     LOG.info("Initialized plan {} based on reservable queue {}",
         plan.toString(), planQueueName);
     return plan;
@@ -448,7 +453,7 @@ public abstract class AbstractReservationSystem extends AbstractService
       if (Planner.class.isAssignableFrom(plannerClazz)) {
         Planner planner =
             (Planner) ReflectionUtils.newInstance(plannerClazz, conf);
-        planner.init(planQueueName, reservationConfig);
+        planner.init(clock, planQueueName, reservationConfig);
         return planner;
       } else {
         throw new YarnRuntimeException("Class: " + plannerClazz

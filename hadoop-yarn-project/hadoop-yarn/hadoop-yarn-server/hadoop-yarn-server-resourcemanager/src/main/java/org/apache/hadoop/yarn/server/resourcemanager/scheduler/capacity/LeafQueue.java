@@ -162,6 +162,7 @@ public class LeafQueue extends AbstractCSQueue {
 
     // One time initialization is enough since it is static ordering policy
     this.pendingOrderingPolicy = new FifoOrderingPolicyForPendingApps();
+    pendingOrderingPolicy.setClock(cs.getClock());
 
     LOG.debug("LeafQueue: name={}, fullname={}", queueName, getQueuePath());
 
@@ -192,6 +193,7 @@ public class LeafQueue extends AbstractCSQueue {
 
       setOrderingPolicy(
           conf.<FiCaSchedulerApp>getAppOrderingPolicy(getQueuePath()));
+      orderingPolicy.setClock(csContext.getClock());
 
       usersManager.setUserLimit(conf.getUserLimit(getQueuePath()));
       usersManager.setUserLimitFactor(conf.getUserLimitFactor(getQueuePath()));

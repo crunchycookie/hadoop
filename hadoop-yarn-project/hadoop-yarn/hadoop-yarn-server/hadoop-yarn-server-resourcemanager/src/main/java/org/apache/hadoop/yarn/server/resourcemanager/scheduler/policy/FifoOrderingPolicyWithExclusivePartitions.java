@@ -25,6 +25,7 @@ import java.util.Map;
 import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.capacity.CapacitySchedulerConfiguration;
 import org.apache.hadoop.yarn.server.resourcemanager.rmcontainer.RMContainer;
+import org.apache.hadoop.yarn.util.Clock;
 
 
 /**
@@ -37,6 +38,7 @@ public class FifoOrderingPolicyWithExclusivePartitions<S extends SchedulableEnti
 
   private static final String DEFAULT_PARTITION = "DEFAULT_PARTITION";
 
+  protected Clock clock;
   private Map<String, OrderingPolicy<S>> orderingPolicies;
 
   public FifoOrderingPolicyWithExclusivePartitions() {
@@ -147,5 +149,12 @@ public class FifoOrderingPolicyWithExclusivePartitions<S extends SchedulableEnti
     String keyPartition = orderingPolicies.containsKey(partition) ?
         partition : DEFAULT_PARTITION;
     return orderingPolicies.get(keyPartition);
+  }
+
+  /**
+   * This method should be called once right after configuration.
+   */
+  public void setClock(final Clock clock) {
+    this.clock = clock;
   }
 }

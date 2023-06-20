@@ -52,6 +52,8 @@ import org.apache.hadoop.yarn.server.resourcemanager.scheduler.common.QueueEntit
 import org.apache.hadoop.yarn.server.resourcemanager.security.AppPriorityACLsManager;
 
 import org.apache.hadoop.thirdparty.com.google.common.annotations.VisibleForTesting;
+import org.apache.hadoop.yarn.util.Clock;
+import org.apache.hadoop.yarn.util.SystemClock;
 
 /**
  *
@@ -79,6 +81,7 @@ public class CapacitySchedulerQueueManager implements SchedulerQueueManager<
   private CSQueue root;
   private final RMNodeLabelsManager labelManager;
   private AppPriorityACLsManager appPriorityACLManager;
+  private final Clock clock;
 
   private QueueStateManager<CSQueue, CapacitySchedulerConfiguration>
       queueStateManager;
@@ -91,11 +94,13 @@ public class CapacitySchedulerQueueManager implements SchedulerQueueManager<
    */
   public CapacitySchedulerQueueManager(Configuration conf,
       RMNodeLabelsManager labelManager,
-      AppPriorityACLsManager appPriorityACLManager) {
+                                       AppPriorityACLsManager appPriorityACLManager,
+                                       Clock clock) {
     this.authorizer = YarnAuthorizationProvider.getInstance(conf);
     this.labelManager = labelManager;
     this.queueStateManager = new QueueStateManager<>();
     this.appPriorityACLManager = appPriorityACLManager;
+    this.clock = clock;
   }
 
   @Override
@@ -257,6 +262,7 @@ public class CapacitySchedulerQueueManager implements SchedulerQueueManager<
         throw new IllegalStateException(
             "Queue configuration missing child queue names for " + queueName);
       }
+
       // Check if the queue will be dynamically managed by the Reservation
       // system
       if (isReservableQueue) {
@@ -314,7 +320,6 @@ public class CapacitySchedulerQueueManager implements SchedulerQueueManager<
         childQueues.add(childQueue);
       }
       parentQueue.setChildQueues(childQueues);
-
     }
 
     newQueues.add(queue);

@@ -32,11 +32,11 @@ import org.apache.hadoop.yarn.server.resourcemanager.reservation.ReservationAllo
 import org.apache.hadoop.yarn.server.resourcemanager.reservation.ReservationSchedulerConfiguration;
 import org.apache.hadoop.yarn.server.resourcemanager.reservation.exceptions.PlanningException;
 import org.apache.hadoop.yarn.util.Clock;
-import org.apache.hadoop.yarn.util.UTCClock;
 import org.apache.hadoop.yarn.util.resource.ResourceCalculator;
 import org.apache.hadoop.yarn.util.resource.Resources;
 
 import org.apache.hadoop.thirdparty.com.google.common.annotations.VisibleForTesting;
+
 
 /**
  * This (re)planner scan a period of time from now to a maximum time window (or
@@ -53,25 +53,19 @@ public class SimpleCapacityReplanner implements Planner {
 
   private static final Resource ZERO_RESOURCE = Resource.newInstance(0, 0);
 
-  private final Clock clock;
+  private Clock clock;
 
   // this allows to control to time-span of this replanning
   // far into the future time instants might be worth replanning for
   // later on
   private long lengthOfCheckZone;
 
-  public SimpleCapacityReplanner() {
-    this(new UTCClock());
-  }
-
-  @VisibleForTesting
-  SimpleCapacityReplanner(Clock clock) {
-    this.clock = clock;
-  }
-
   @Override
-  public void init(String planQueueName,
+  public void init(
+      Clock clock,
+      String planQueueName,
       ReservationSchedulerConfiguration conf) {
+    this.clock = clock;
     this.lengthOfCheckZone = conf.getEnforcementWindow(planQueueName);
   }
 

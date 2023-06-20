@@ -77,6 +77,8 @@ import org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FSQueue;
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler;
 import org.apache.hadoop.yarn.server.security.ApplicationACLsManager;
 import org.apache.hadoop.yarn.server.utils.BuilderUtils;
+import org.apache.hadoop.yarn.util.Clock;
+import org.apache.hadoop.yarn.util.SystemClock;
 import org.apache.hadoop.yarn.util.Times;
 
 import org.apache.hadoop.thirdparty.com.google.common.annotations.VisibleForTesting;
@@ -101,6 +103,7 @@ public class RMAppManager implements EventHandler<RMAppManagerEvent>,
   private final ApplicationMasterService masterService;
   private final YarnScheduler scheduler;
   private final ApplicationACLsManager applicationACLsManager;
+  private final Clock clock;
   private Configuration conf;
   private YarnAuthorizationProvider authorizer;
   private boolean timelineServiceV2Enabled;
@@ -111,7 +114,15 @@ public class RMAppManager implements EventHandler<RMAppManagerEvent>,
 
   public RMAppManager(RMContext context,
       YarnScheduler scheduler, ApplicationMasterService masterService,
-      ApplicationACLsManager applicationACLsManager, Configuration conf) {
+                      ApplicationACLsManager applicationACLsManager,
+                      Configuration conf) {
+    this(context, scheduler, masterService, applicationACLsManager, SystemClock.getInstance(), conf);
+  }
+
+  public RMAppManager(RMContext context,
+      YarnScheduler scheduler, ApplicationMasterService masterService,
+      ApplicationACLsManager applicationACLsManager,
+      Clock clock, Configuration conf) {
     this.rmContext = context;
     this.scheduler = scheduler;
     this.masterService = masterService;
@@ -127,6 +138,7 @@ public class RMAppManager implements EventHandler<RMAppManagerEvent>,
     if (this.maxCompletedAppsInStateStore > this.maxCompletedAppsInMemory) {
       this.maxCompletedAppsInStateStore = this.maxCompletedAppsInMemory;
     }
+    this.clock = clock;
     this.authorizer = YarnAuthorizationProvider.getInstance(conf);
     this.timelineServiceV2Enabled = YarnConfiguration.
         timelineServiceV2Enabled(conf);
@@ -782,8 +794,7 @@ public class RMAppManager implements EventHandler<RMAppManagerEvent>,
     }
 
     // Update the changed application state to timeline server
-    rmContext.getSystemMetricsPublisher().appUpdated(app,
-        System.currentTimeMillis());
+    rmContext.getSystemMetricsPublisher().appUpdated(app, clock.getTime());
   }
 
   /**

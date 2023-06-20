@@ -1,0 +1,90 @@
+{
+  "am.type" : "mapreduce", // type of AM, optional, the default value is "mapreduce"
+  "job.submit.ms": 0,
+  "job.start.ms" : 0,      // job start time
+  "job.end.ms" : 95375,    // job finish time, optional, the default value is 0
+  "job.queue.name" : "sls_queue_1", // the queue job will be submitted to
+  "job.id" : "job_1",      // the job id used to track the job, optional. The default value, an zero-based integer increasing with number of jobs, is used if this is not specified or job.count > 1
+  "job.user" : "default",  // user, optional, the default value is "default"
+  "job.count" : 1,         // number of jobs, optional, the default value is 1
+  "job.tasks" : [ {
+    "count": 1,    // number of tasks, optional, the default value is 1
+    "container.host" : "/default-rack/node1",  // host the container asks for
+    "container.start.ms" : 6664,  // container start time, optional
+    "container.end.ms" : 23707,   // container finish time, optional
+    "duration.ms":  50000,        // duration of the container, optional if start and end time is specified
+    "container.priority" : 20,    // priority of the container, optional, the default value is 20
+    "container.type" : "map"      // type of the container, could be "map" or "reduce", optional, the default value is "map"
+  }, {
+    "container.host" : "/default-rack/node3",
+    "container.start.ms" : 6665,
+    "container.end.ms" : 21593,
+    "container.priority" : 20,
+    "container.type" : "reduce"
+  }, {
+    "container.host" : "/default-rack/node2",
+    "container.start.ms" : 68770,
+    "container.end.ms" : 86613,
+    "container.priority" : 20,
+    "container.type" : "reduce"
+  } ]
+}
+{
+  "am.type" : "mapreduce",
+  "job.start.ms" : 105204, // If all dependency is polling, then this is optional
+  "job.end.ms" : 197256,
+  "job.queue.name" : "sls_queue_2",
+  "job.id" : "job_2",
+  "job.user" : "default",
+  "job.tasks" : [ {
+    "container.host" : "/default-rack/node1",
+    "container.start.ms" : 111822,
+    "container.end.ms" : 133985,
+    "container.priority" : 20,
+    "container.type" : "map"
+  }, {
+    "container.host" : "/default-rack/node2",
+    "container.start.ms" : 111788,
+    "container.end.ms" : 131377,
+    "container.priority" : 20,
+    "container.type" : "map"
+  } ]
+}
+{
+  "am.type" : "mapreduce",
+  "job.start.ms" : 60432,
+  "job.end.ms" : 147226,
+  "job.queue.name" : "sls_queue_2",
+  "job.id" : "job_3",
+  "job.user" : "default",
+  "job.tasks" : [ {
+    "container.host" : "/default-rack/node1",
+    "duration.ms":  50000,
+    "container.priority" : 20,
+    "container.type" : "map"
+  }, {
+    "container.host" : "/default-rack/node2",
+    "duration.ms":  50000,
+    "container.priority" : 20,
+    "container.type" : "map"
+  } ]
+}
+{
+  "am.type" : "mapreduce",
+  "job.start.ms" : 85219,
+  "job.end.ms" : 147226,
+  "job.queue.name" : "sls_queue_2",
+  "job.id" : "job_4",
+  "job.user" : "default",
+  "job.tasks" : [ {
+    "container.host" : "/default-rack/node1",
+    "duration.ms":  50000,
+    "container.priority" : 20,
+    "container.type" : "map"
+  }, {
+    "container.host" : "/default-rack/node2",
+    "duration.ms":  50000,
+    "container.priority" : 20,
+    "container.type" : "map"
+  } ]
+}

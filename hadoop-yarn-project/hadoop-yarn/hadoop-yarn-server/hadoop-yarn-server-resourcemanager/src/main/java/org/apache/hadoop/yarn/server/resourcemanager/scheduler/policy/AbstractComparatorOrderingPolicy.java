@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.apache.hadoop.yarn.server.resourcemanager.rmcontainer.RMContainer;
 import org.apache.hadoop.yarn.server.resourcemanager.scheduler.*;
 import org.apache.hadoop.yarn.nodelabels.CommonNodeLabelsManager;
+import org.apache.hadoop.yarn.util.Clock;
 
 
 /**
@@ -37,6 +38,7 @@ public abstract class AbstractComparatorOrderingPolicy<S extends SchedulableEnti
   private static final Logger LOG =
       LoggerFactory.getLogger(OrderingPolicy.class);
                                             
+  protected Clock clock;
   protected ConcurrentSkipListSet<S> schedulableEntities;
   protected Comparator<SchedulableEntity> comparator;
   protected Map<String, S> entitiesToReorder = new HashMap<String, S>();
@@ -142,4 +144,10 @@ public abstract class AbstractComparatorOrderingPolicy<S extends SchedulableEnti
   @Override
   public abstract String getConfigName();
 
+  /**
+   * This method should be called once right after configuration.
+   */
+  public void setClock(final Clock clock) {
+    this.clock = clock;
+  }
 }

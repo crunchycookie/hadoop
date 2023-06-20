@@ -69,14 +69,14 @@ public class TestSimpleCapacityReplanner {
     QueueMetrics queueMetrics = mock(QueueMetrics.class);
 
     when(clock.getTime()).thenReturn(0L);
-    SimpleCapacityReplanner enf = new SimpleCapacityReplanner(clock);
+    SimpleCapacityReplanner enf = new SimpleCapacityReplanner();
 
     RMContext context = ReservationSystemTestUtil.createMockRMContext();
     ReservationSchedulerConfiguration conf =
         mock(ReservationSchedulerConfiguration.class);
     when(conf.getEnforcementWindow(any(String.class))).thenReturn(6L);
 
-    enf.init("blah", conf);
+    enf.init(clock, "blah", conf);
 
     // Initialize the plan with more resources
     InMemoryPlan plan = new InMemoryPlan(queueMetrics, policy, agent,
